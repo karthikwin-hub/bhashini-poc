@@ -15,17 +15,17 @@
 | US4-AS1 | AS | COVERED | tests/acceptance/test_weather_flow.py:5, tests/acceptance/test_weather_flow.py:19, tests/acceptance/test_weather_flow.py:20 |
 | US4-AS2 | AS | COVERED | tests/acceptance/test_weather_flow.py:6, tests/acceptance/test_weather_flow.py:51, tests/acceptance/test_weather_flow.py:52 |
 | US4-AS3 | AS | COVERED | tests/acceptance/test_weather_flow.py:7, tests/acceptance/test_weather_flow.py:82, tests/acceptance/test_weather_flow.py:83 |
-| FR-001 | FR | not yet due | - |
+| FR-001 | FR | COVERED | tests/unit/test_webhook_routes.py:4 |
 | FR-002 | FR | COVERED | tests/acceptance/test_language_selection.py:4 |
-| FR-003 | FR | COVERED | tests/acceptance/test_language_selection.py:5 |
-| FR-004 | FR | COVERED | tests/acceptance/test_language_selection.py:6 |
+| FR-003 | FR | COVERED | tests/unit/test_session_domain.py:4, tests/acceptance/test_language_selection.py:5 |
+| FR-004 | FR | COVERED | tests/unit/test_session_domain.py:5, tests/acceptance/test_language_selection.py:6 |
 | FR-005 | FR | COVERED | tests/acceptance/test_language_selection.py:7 |
 | FR-006 | FR | COVERED | tests/acceptance/test_translate_flow.py:4 |
 | FR-007 | FR | COVERED | tests/acceptance/test_voice_message_flow.py:4 |
 | FR-008 | FR | COVERED | tests/acceptance/test_weather_flow.py:4 |
-| FR-009 | FR | not yet due | - |
-| FR-010 | FR | not yet due | - |
-| FR-011 | FR | not yet due | - |
+| FR-009 | FR | COVERED | tests/unit/test_session_domain.py:6, tests/unit/test_session_domain.py:77 |
+| FR-010 | FR | COVERED | tests/unit/test_webhook_routes.py:5 |
+| FR-011 | FR | COVERED | tests/unit/test_config.py:4, tests/unit/test_config.py:10, tests/unit/test_config.py:11 |
 | FR-012 | FR | COVERED | tests/acceptance/test_translate_flow.py:5 |
 | SC-001 | SC | not required | - |
 | SC-002 | SC | not required | - |
@@ -39,4 +39,4 @@
 | NFR-006 | NFR | not required | - |
 
 Required types: AS, FR. Missing: 0. Manual: 0.
-Scope: progressive (4/32 tasks ticked; stories started: US1, US2, US3, US4).
+Scope: all 32 tasks ticked - feature complete, everything required.
