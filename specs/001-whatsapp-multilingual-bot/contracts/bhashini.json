@@ -1,0 +1,36 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "BhashiniComputeContract",
+  "type": "object",
+  "description": "Bhashini ULCA dynamic handshake and inference contract",
+  "properties": {
+    "configRequest": {
+      "type": "object",
+      "required": ["pipelineTasks", "pipelineRequestConfig"],
+      "properties": {
+        "pipelineTasks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["taskType", "config"],
+            "properties": {
+              "taskType": { "type": "string", "enum": ["asr", "translation", "tts"] },
+              "config": {
+                "type": "object",
+                "properties": {
+                  "language": { "type": "object" }
+                }
+              }
+            }
+          }
+        },
+        "pipelineRequestConfig": {
+          "type": "object",
+          "properties": {
+            "pipelineId": { "type": "string" }
+          }
+        }
+      }
+    }
+  }
+}

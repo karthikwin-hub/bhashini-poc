@@ -1,0 +1,60 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "WhatsAppWebhookPayload",
+  "type": "object",
+  "required": ["object", "entry"],
+  "properties": {
+    "object": { "type": "string", "enum": ["whatsapp_business_account"] },
+    "entry": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["changes"],
+        "properties": {
+          "changes": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["value"],
+              "properties": {
+                "value": {
+                  "type": "object",
+                  "required": ["messages"],
+                  "properties": {
+                    "messages": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": ["from", "id", "type"],
+                        "properties": {
+                          "from": { "type": "string" },
+                          "id": { "type": "string" },
+                          "type": { "type": "string", "enum": ["text", "audio", "document", "location"] },
+                          "text": {
+                            "type": "object",
+                            "properties": { "body": { "type": "string" } }
+                          },
+                          "audio": {
+                            "type": "object",
+                            "properties": { "id": { "type": "string" } }
+                          },
+                          "location": {
+                            "type": "object",
+                            "properties": {
+                              "latitude": { "type": "number" },
+                              "longitude": { "type": "number" }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
