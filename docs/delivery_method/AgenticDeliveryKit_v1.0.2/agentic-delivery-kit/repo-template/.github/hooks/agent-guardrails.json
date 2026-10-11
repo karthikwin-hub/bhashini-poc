@@ -1,0 +1,29 @@
+{
+  "version": 1,
+  "hooks": {
+    "sessionStart": [
+      {
+        "type": "command",
+        "bash": "python3 scripts/harness/agent_hooks.py session-start",
+        "powershell": "python scripts/harness/agent_hooks.py session-start",
+        "timeoutSec": 20
+      }
+    ],
+    "preToolUse": [
+      {
+        "type": "command",
+        "bash": "python3 scripts/harness/agent_hooks.py pre-tool",
+        "powershell": "python scripts/harness/agent_hooks.py pre-tool",
+        "timeoutSec": 15
+      }
+    ],
+    "agentStop": [
+      {
+        "type": "command",
+        "bash": "python3 scripts/harness/agent_hooks.py stop",
+        "powershell": "python scripts/harness/agent_hooks.py stop",
+        "timeoutSec": 30
+      }
+    ]
+  }
+}

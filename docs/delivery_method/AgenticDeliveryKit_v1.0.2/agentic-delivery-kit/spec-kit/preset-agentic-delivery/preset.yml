@@ -1,0 +1,61 @@
+schema_version: "1.0"
+
+preset:
+  id: "agentic-delivery"
+  name: "Agentic Delivery Standard"
+  version: "1.0.1"
+  description: "Team quality gates for AI-led delivery: constitution, NFRs, traceable acceptance tests, harness plan, verified implementation loop."
+  author: "[Your team]"
+  repository: "[internal git URL of this kit]"
+  license: "Proprietary - internal use"
+
+requires:
+  speckit_version: ">=0.16.1"
+
+provides:
+  templates:
+    # Constitution scaffold with the team's ten articles pre-written (replaces the core scaffold).
+    - type: "template"
+      name: "constitution-template"
+      file: "templates/constitution-template.md"
+      description: "Agentic Delivery Standard constitution articles and quality gates"
+      replaces: "constitution-template"
+
+    # Spec: core template + team sections (scope, NFRs, contracts, testing requirements, G1 checklist).
+    - type: "template"
+      name: "spec-template"
+      file: "templates/spec-addendum.md"
+      description: "Adds scope boundaries, NFRs, contracts, testing requirements and the G1 Spec Ready checklist"
+      strategy: "append"
+
+    # Plan: core template + harness and verification plan (G2 Design Ready).
+    - type: "template"
+      name: "plan-template"
+      file: "templates/plan-addendum.md"
+      description: "Adds the harness and verification plan, ownership, security, rollout and the G2 checklist"
+      strategy: "append"
+
+    # Commands: extra instructions appended to the core command prompts.
+    - type: "command"
+      name: "speckit.tasks"
+      file: "commands/speckit.tasks.md"
+      description: "Tests-first, verifiable, refactor-first task generation rules"
+      strategy: "append"
+
+    - type: "command"
+      name: "speckit.implement"
+      file: "commands/speckit.implement.md"
+      description: "Bounded implementation loop with verification, handoff and stop rules"
+      strategy: "append"
+
+    - type: "command"
+      name: "speckit.converge"
+      file: "commands/speckit.converge.md"
+      description: "Evidence-based convergence: verify, traceability and checks.md must agree"
+      strategy: "append"
+
+tags:
+  - "quality-gates"
+  - "traceability"
+  - "harness-engineering"
+  - "governance"

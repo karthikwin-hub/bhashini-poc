@@ -1,0 +1,281 @@
+{
+ "kit": "agentic-delivery-kit",
+ "version": "1.0.2",
+ "files": [
+  {
+   "path": ".claude/agents/explorer.md",
+   "tier": "standard",
+   "tool": "claude"
+  },
+  {
+   "path": ".claude/agents/harness-steward.md",
+   "tier": "standard",
+   "tool": "claude"
+  },
+  {
+   "path": ".claude/agents/implementer.md",
+   "tier": "standard",
+   "tool": "claude"
+  },
+  {
+   "path": ".claude/agents/reviewer.md",
+   "tier": "standard",
+   "tool": "claude"
+  },
+  {
+   "path": ".claude/agents/test-designer.md",
+   "tier": "standard",
+   "tool": "claude"
+  },
+  {
+   "path": ".claude/agents/verifier.md",
+   "tier": "standard",
+   "tool": "claude"
+  },
+  {
+   "path": ".claude/settings.json",
+   "tier": "seed",
+   "tool": "claude"
+  },
+  {
+   "path": ".claude/skills/capture-lesson/SKILL.md",
+   "tier": "standard",
+   "tool": "claude"
+  },
+  {
+   "path": ".claude/skills/refactor-safely/SKILL.md",
+   "tier": "standard",
+   "tool": "claude"
+  },
+  {
+   "path": ".claude/skills/reproduce-bug/SKILL.md",
+   "tier": "standard",
+   "tool": "claude"
+  },
+  {
+   "path": ".claude/skills/session-handoff/SKILL.md",
+   "tier": "standard",
+   "tool": "claude"
+  },
+  {
+   "path": ".claude/skills/verify-change/SKILL.md",
+   "tier": "standard",
+   "tool": "claude"
+  },
+  {
+   "path": ".claude/skills/write-acceptance-tests/SKILL.md",
+   "tier": "standard",
+   "tool": "claude"
+  },
+  {
+   "path": ".github/CODEOWNERS",
+   "tier": "seed",
+   "tool": "any"
+  },
+  {
+   "path": ".github/agents/explorer.agent.md",
+   "tier": "standard",
+   "tool": "copilot"
+  },
+  {
+   "path": ".github/agents/harness-steward.agent.md",
+   "tier": "standard",
+   "tool": "copilot"
+  },
+  {
+   "path": ".github/agents/implementer.agent.md",
+   "tier": "standard",
+   "tool": "copilot"
+  },
+  {
+   "path": ".github/agents/reviewer.agent.md",
+   "tier": "standard",
+   "tool": "copilot"
+  },
+  {
+   "path": ".github/agents/test-designer.agent.md",
+   "tier": "standard",
+   "tool": "copilot"
+  },
+  {
+   "path": ".github/agents/verifier.agent.md",
+   "tier": "standard",
+   "tool": "copilot"
+  },
+  {
+   "path": ".github/copilot-instructions.md",
+   "tier": "seed",
+   "tool": "copilot"
+  },
+  {
+   "path": ".github/hooks/agent-guardrails.json",
+   "tier": "standard",
+   "tool": "copilot"
+  },
+  {
+   "path": ".github/instructions/specs.instructions.md",
+   "tier": "standard",
+   "tool": "copilot"
+  },
+  {
+   "path": ".github/instructions/tests.instructions.md",
+   "tier": "standard",
+   "tool": "copilot"
+  },
+  {
+   "path": ".github/pull_request_template.md",
+   "tier": "seed",
+   "tool": "any"
+  },
+  {
+   "path": ".github/skills/capture-lesson/SKILL.md",
+   "tier": "standard",
+   "tool": "copilot"
+  },
+  {
+   "path": ".github/skills/refactor-safely/SKILL.md",
+   "tier": "standard",
+   "tool": "copilot"
+  },
+  {
+   "path": ".github/skills/reproduce-bug/SKILL.md",
+   "tier": "standard",
+   "tool": "copilot"
+  },
+  {
+   "path": ".github/skills/session-handoff/SKILL.md",
+   "tier": "standard",
+   "tool": "copilot"
+  },
+  {
+   "path": ".github/skills/verify-change/SKILL.md",
+   "tier": "standard",
+   "tool": "copilot"
+  },
+  {
+   "path": ".github/skills/write-acceptance-tests/SKILL.md",
+   "tier": "standard",
+   "tool": "copilot"
+  },
+  {
+   "path": ".github/workflows/copilot-setup-steps.yml",
+   "tier": "seed",
+   "tool": "any"
+  },
+  {
+   "path": ".github/workflows/quality-gates.yml",
+   "tier": "seed",
+   "tool": "any"
+  },
+  {
+   "path": "AGENTS.md",
+   "tier": "seed",
+   "tool": "any"
+  },
+  {
+   "path": "CLAUDE.md",
+   "tier": "seed",
+   "tool": "claude"
+  },
+  {
+   "path": "docs/ARCHITECTURE.md",
+   "tier": "seed",
+   "tool": "any"
+  },
+  {
+   "path": "docs/PROJECT_RULES.md",
+   "tier": "seed",
+   "tool": "any"
+  },
+  {
+   "path": "docs/agent-memory/harness-backlog.md",
+   "tier": "seed",
+   "tool": "any"
+  },
+  {
+   "path": "docs/agent-memory/lessons.md",
+   "tier": "seed",
+   "tool": "any"
+  },
+  {
+   "path": "docs/decisions/0000-adr-template.md",
+   "tier": "seed",
+   "tool": "any"
+  },
+  {
+   "path": "docs/standards/DEFINITION_OF_DONE.md",
+   "tier": "standard",
+   "tool": "any"
+  },
+  {
+   "path": "docs/standards/ENGINEERING_PRINCIPLES.md",
+   "tier": "standard",
+   "tool": "any"
+  },
+  {
+   "path": "docs/standards/REVIEW_CHECKLIST.md",
+   "tier": "standard",
+   "tool": "any"
+  },
+  {
+   "path": "docs/standards/SECURITY_FOR_AGENTS.md",
+   "tier": "standard",
+   "tool": "any"
+  },
+  {
+   "path": "docs/standards/TESTING_STRATEGY.md",
+   "tier": "standard",
+   "tool": "any"
+  },
+  {
+   "path": "docs/templates/checks-template.md",
+   "tier": "standard",
+   "tool": "any"
+  },
+  {
+   "path": "docs/templates/progress-template.md",
+   "tier": "standard",
+   "tool": "any"
+  },
+  {
+   "path": "harness.toml",
+   "tier": "seed",
+   "tool": "any"
+  },
+  {
+   "path": "scripts/harness/_common.py",
+   "tier": "standard",
+   "tool": "any"
+  },
+  {
+   "path": "scripts/harness/agent_hooks.py",
+   "tier": "standard",
+   "tool": "any"
+  },
+  {
+   "path": "scripts/harness/check_test_integrity.py",
+   "tier": "standard",
+   "tool": "any"
+  },
+  {
+   "path": "scripts/harness/check_traceability.py",
+   "tier": "standard",
+   "tool": "any"
+  },
+  {
+   "path": "scripts/harness/harness_doctor.py",
+   "tier": "standard",
+   "tool": "any"
+  },
+  {
+   "path": "scripts/harness/sdd_status.py",
+   "tier": "standard",
+   "tool": "any"
+  },
+  {
+   "path": "scripts/harness/verify.py",
+   "tier": "standard",
+   "tool": "any"
+  }
+ ]
+}

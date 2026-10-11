@@ -1,0 +1,162 @@
+# Agentic Delivery Standard v1.0 - the delivery GRAPH for a Lane 3 feature, as a resumable Spec Kit workflow.
+# Nodes: agent commands/prompts, deterministic shell checks, human gates. Edges: the step order + one bounded retry branch.
+# State: Spec Kit artefacts in specs/<feature>/ + .specify/workflows/runs/<run_id>/ (pause/resume at any gate).
+# Run:    specify workflow run ./workflow.yml -i spec="<what and why>"     (or: specify workflow add --dev <this folder>)
+# Resume: specify workflow resume <run_id>   after reviewing each gate.
+# Shell steps run fixed commands only (no interpolated input) - see Spec Kit's shell-safety guidance.
+schema_version: "1.0"
+
+workflow:
+  id: "agentic-sdd"
+  name: "Agentic SDD with quality gates"
+  version: "1.0.0"
+  author: "[Your team]"
+  description: "Specify > clarify > G1 > plan > checklist > G2 > tasks > analyze > acceptance tests > G3 > implement > verify > converge (bounded second pass) > independent review > verification > G4"
+
+requires:
+  speckit_version: ">=1.0.0"
+  integrations:
+    any:
+      - "copilot"
+      - "claude"
+
+inputs:
+  spec:
+    type: string
+    required: true
+    prompt: "Describe what you want to build - the what and why, not the how"
+  integration:
+    type: string
+    default: "auto"
+    prompt: "Integration to use ('auto' = the project's initialised integration)"
+
+steps:
+  # ---------------------------------------------------------------- Phase 1: intent
+  - id: specify
+    command: speckit.specify
+    integration: "{{ inputs.integration }}"
+    input:
+      args: "{{ inputs.spec }}"
+
+  - id: clarify
+    command: speckit.clarify
+    integration: "{{ inputs.integration }}"
+    input:
+      args: "Focus on testability of every requirement, negative and edge-case scenarios, measurable NFRs and scope boundaries."
+
+  - id: gate-g1-spec-ready
+    type: gate
+    message: "G1 Spec Ready - review spec.md: scenarios (Given/When/Then), FR-###, NFRs, scope, and the G1 checklist. Approve to plan."
+    options: [approve, reject]
+    on_reject: abort
+
+  # ---------------------------------------------------------------- Phase 2: design
+  - id: plan
+    command: speckit.plan
+    integration: "{{ inputs.integration }}"
+    input:
+      args: "Follow the constitution and docs/ARCHITECTURE.md. Reuse owning modules; justify any new dependency. Complete the Harness and Verification Plan."
+
+  - id: checklist
+    command: speckit.checklist
+    integration: "{{ inputs.integration }}"
+    input:
+      args: "Requirements quality: completeness, clarity, consistency, measurability, testability."
+
+  - id: gate-g2-design-ready
+    type: gate
+    message: "G2 Design Ready - review plan.md (incl. Harness and Verification Plan), contracts/, data-model.md and the checklist results."
+    options: [approve, reject]
+    on_reject: abort
+
+  # ---------------------------------------------------------------- Phase 3: work breakdown
+  - id: tasks
+    command: speckit.tasks
+    integration: "{{ inputs.integration }}"
+    input:
+      args: "{{ inputs.spec }}"
+
+  - id: analyze
+    command: speckit.analyze
+    integration: "{{ inputs.integration }}"
+    input:
+      args: "Check spec/plan/tasks consistency and that every FR-### and US<n>-AS<m> maps to tasks and tests."
+
+  - id: acceptance-tests
+    type: prompt
+    integration: "{{ inputs.integration }}"
+    prompt: "Act as the test-designer role (.github/agents/test-designer.agent.md or .claude/agents/test-designer.md). For the P1 user stories of the active feature, write the acceptance-test tasks from tasks.md, run them, and show they fail for the right reason. Do not write production code. Tick only the acceptance-test tasks you completed and update progress.md."
+
+  - id: gate-g3-ready-to-build
+    type: gate
+    message: "G3 Ready to Build - /speckit.analyze shows no CRITICAL/HIGH findings, and the P1 acceptance tests express the intended behaviour. Approve to implement."
+    options: [approve, reject]
+    on_reject: abort
+
+  # ---------------------------------------------------------------- Phase 4-5: build loop
+  - id: implement
+    command: speckit.implement
+    integration: "{{ inputs.integration }}"
+    input:
+      args: "{{ inputs.spec }}"
+
+  - id: verify
+    type: shell
+    run: "uv run --no-project --quiet scripts/harness/verify.py"
+    timeout: 3600
+    continue_on_error: true
+
+  - id: converge
+    command: speckit.converge
+    integration: "{{ inputs.integration }}"
+    input:
+      args: "Assess against spec, plan and tasks using the convergence evidence rules; append tasks for every gap."
+
+  - id: open-tasks
+    type: shell
+    run: "uv run --no-project --quiet scripts/harness/sdd_status.py"
+    continue_on_error: true
+
+  # Bounded loop: at most one automatic second pass. Anything still open goes to a human at G4.
+  - id: second-pass
+    type: if
+    condition: "{{ steps.open-tasks.output.exit_code != 0 }}"
+    then:
+      - id: implement-again
+        command: speckit.implement
+        integration: "{{ inputs.integration }}"
+        input:
+          args: "Complete only the open tasks (including those appended by /speckit.converge) and fix the failures in .agent/last-verify.md. Apply the stop rules."
+      - id: verify-again
+        type: shell
+        run: "uv run --no-project --quiet scripts/harness/verify.py"
+        timeout: 3600
+        continue_on_error: true
+      - id: converge-again
+        command: speckit.converge
+        integration: "{{ inputs.integration }}"
+        input:
+          args: "Re-assess convergence with the evidence rules."
+
+  # ---------------------------------------------------------------- Phase 5: independent judgement
+  - id: independent-review
+    type: prompt
+    integration: "{{ inputs.integration }}"
+    prompt: "Act as the reviewer role (.github/agents/reviewer.agent.md or .claude/agents/reviewer.md). You did not write this change. Review the current branch against main using docs/standards/REVIEW_CHECKLIST.md, run the checks yourself, and save the findings as review.md in the active feature folder. Do not change code."
+
+  - id: verification-report
+    type: prompt
+    integration: "{{ inputs.integration }}"
+    prompt: "Act as the verifier role (.github/agents/verifier.agent.md or .claude/agents/verifier.md). Fill checks.md for every FR, scenario and NFR of the active feature with verdicts and observed evidence. Edit only checks.md."
+
+  - id: final-status
+    type: shell
+    run: "uv run --no-project --quiet scripts/harness/sdd_status.py"
+    continue_on_error: true
+
+  # ---------------------------------------------------------------- Phase 6: human decision
+  - id: gate-g4-done
+    type: gate
+    message: "G4 Done - read checks.md, review.md, traceability.md and .agent/last-verify.md. Approve only if all are green; then open the PR (a human merges)."
+    options: [approve, reject]
+    on_reject: abort

@@ -1,0 +1,25 @@
+# Agentic Delivery Standard v1.0 · tier: SEED. Replace the @handles. Enable "Require review from Code Owners" in branch protection.
+# Harness files are the agents' guardrails: an agent must never be able to loosen its own constraints unreviewed.
+
+# Default owners
+*                                   @your-org/your-team
+
+# Harness and agent configuration -> tech lead / harness steward
+/AGENTS.md                          @your-org/tech-leads
+**/AGENTS.md                        @your-org/tech-leads
+/CLAUDE.md                          @your-org/tech-leads
+/harness.toml                       @your-org/tech-leads
+/scripts/harness/                   @your-org/tech-leads
+/.github/hooks/                     @your-org/tech-leads
+/.github/workflows/                 @your-org/tech-leads
+/.github/agents/                    @your-org/tech-leads
+/.github/skills/                    @your-org/tech-leads
+/.github/instructions/              @your-org/tech-leads
+/.github/copilot-instructions.md    @your-org/tech-leads
+/.claude/                           @your-org/tech-leads
+/.specify/memory/constitution.md    @your-org/tech-leads @your-org/product-owners
+/docs/standards/                    @your-org/tech-leads
+
+# Intent: specs and acceptance tests -> spec owners (BA / product) must approve changes
+/specs/                             @your-org/product-owners
+/tests/acceptance/                  @your-org/product-owners @your-org/tech-leads
