@@ -1,0 +1,25 @@
+# Agentic Delivery Standard v1.0 · tier: SEED.
+# Harness files are the agents' guardrails: an agent must never be able to loosen its own constraints unreviewed.
+
+# Default owners
+*                                   @karthikwin-hub
+
+# Harness and agent configuration -> tech lead / harness steward
+/AGENTS.md                          @karthikwin-hub
+**/AGENTS.md                        @karthikwin-hub
+/CLAUDE.md                          @karthikwin-hub
+/harness.toml                       @karthikwin-hub
+/scripts/harness/                   @karthikwin-hub
+/.github/hooks/                     @karthikwin-hub
+/.github/workflows/                 @karthikwin-hub
+/.github/agents/                    @karthikwin-hub
+/.github/skills/                    @karthikwin-hub
+/.github/instructions/              @karthikwin-hub
+/.github/copilot-instructions.md    @karthikwin-hub
+/.claude/                           @karthikwin-hub
+/.specify/memory/constitution.md    @karthikwin-hub
+/docs/standards/                    @karthikwin-hub
+
+# Intent: specs and acceptance tests -> spec owners (BA / product) must approve changes
+/specs/                             @karthikwin-hub
+/tests/acceptance/                  @karthikwin-hub

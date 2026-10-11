@@ -1,0 +1,32 @@
+# Agentic Delivery Standard v1.0 · tier: SEED. Prepares the Copilot coding agent's cloud environment so it can run the same
+# sensors you run locally (python scripts/harness/verify.py). The job MUST be called copilot-setup-steps.
+# CUSTOMIZE the stack steps; keep it fast - it runs before every cloud agent session.
+name: "Copilot Setup Steps"
+
+on:
+  workflow_dispatch:
+  push:
+    paths: [.github/workflows/copilot-setup-steps.yml]
+  pull_request:
+    paths: [.github/workflows/copilot-setup-steps.yml]
+
+jobs:
+  copilot-setup-steps:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      # --- CUSTOMIZE: install the toolchain and dependencies verify.py needs -------------
+      # - uses: actions/setup-node@v4
+      #   with: { node-version: "20", cache: "npm" }
+      # - run: npm ci
+      # - uses: actions/setup-dotnet@v4
+      #   with: { dotnet-version: "8.0.x" }
+      # - run: dotnet restore
+      # -------------------------------------------------------------------------------------
+      - name: Show configured sensors
+        run: python scripts/harness/verify.py --list

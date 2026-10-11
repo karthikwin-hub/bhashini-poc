@@ -1,0 +1,94 @@
+# Agentic Delivery Standard v1.0 · tier: SEED (adapt the "stack setup" step to your project)
+# The same sensors the agents run locally, enforced on every PR. Make these jobs REQUIRED status checks on main.
+# Azure DevOps / other CI: run the same four commands - the scripts are CI-agnostic.
+name: Quality Gates
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: quality-gates-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: Verify (computational sensors)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0            # base branch needed for traceability and test-integrity diffs
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      # --- CUSTOMIZE: stack setup (examples) -------------------------------------------
+      # - uses: actions/setup-node@v4
+      #   with: { node-version: "20", cache: "npm" }
+      # - run: npm ci
+      # - uses: actions/setup-dotnet@v4
+      #   with: { dotnet-version: "8.0.x" }
+      # - run: pip install -r requirements-dev.txt
+      # -------------------------------------------------------------------------------------
+      - name: Full verification (harness.toml)
+        run: python scripts/harness/verify.py --ci
+      - name: Upload verification evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: verify-evidence
+          path: .agent/last-verify.md
+          if-no-files-found: ignore
+
+  traceability:
+    name: Requirements -> tests traceability
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python scripts/harness/check_traceability.py --changed --base "origin/${{ github.base_ref }}"
+
+  test-integrity:
+    name: Tests and acceptance criteria not weakened
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Check (a human adds the 'approved-test-change' label to allow intended changes)
+        env:
+          ALLOW_TEST_CHANGES: ${{ contains(github.event.pull_request.labels.*.name, 'approved-test-change') }}
+        run: python scripts/harness/check_test_integrity.py --base "origin/${{ github.base_ref }}"
+
+  secrets:
+    name: Secret scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      # Prefer GitHub secret scanning + push protection if your plan includes it; this job is a portable fallback.
+      - name: gitleaks (pinned CLI image)
+        run: docker run --rm -v "$PWD:/repo" ghcr.io/gitleaks/gitleaks:v8.18.4 detect --source /repo --no-banner --redact
+
+  dependency-review:
+    name: Dependency review
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/dependency-review-action@v4

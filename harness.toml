@@ -1,0 +1,105 @@
+# harness.toml - this repository's computational sensors and agent policy
+# Agentic Delivery Standard v1.0 · tier: SEED (project-owned: fill in once, keep current)
+#
+# `python scripts/harness/verify.py`        runs every enabled [[check]]  (before "done", in CI)
+# `python scripts/harness/verify.py --fast` runs only checks with fast = true (agent inner loop)
+# Agents run ONLY these commands to prove their work, so keep them real and fast.
+# "{python}" is replaced with the current Python interpreter (works on Windows and Linux).
+# A run value starting with TODO counts as NOT CONFIGURED and fails verification on purpose.
+#
+# Per check: name, run, fast (bool), timeout (s, default 900), hint (shown on failure),
+#            run_windows (optional Windows-specific command), when (globs: run only if matching
+#            files changed), allow_failure (bool: report as WARN), enabled (bool).
+
+[verify]
+stop_guard = true          # agents cannot finish while code changed since the last passing verify
+stop_guard_stage = "fast"  # "fast" or "full": what the stop guard requires
+non_code_globs = ["**/*.md", "docs/**", "specs/**", ".specify/**", ".agent/**"]
+
+# ---------------------------------------------------------------- fast (inner loop) -----
+[[check]]
+name = "format"
+run = "uv run ruff format --check ."
+fast = true
+hint = "Run 'uv run ruff format .' in write mode, then re-run verify. Never hand-format around the formatter."
+
+[[check]]
+name = "lint"
+run = "uv run ruff check ."
+fast = true
+hint = "Run 'uv run ruff check --fix .' or fix the rule violation manually. Do not disable a rule inline unless the PR explains why."
+
+[[check]]
+name = "typecheck"
+run = ""
+enabled = false
+fast = true
+
+[[check]]
+name = "unit-tests"
+run = "uv run pytest -q tests/unit"
+fast = true
+timeout = 900
+hint = "A failing test is information. Fix the code, not the test - unless the test is provably wrong (then ask)."
+
+# ---------------------------------------------------------------- full only -------------
+[[check]]
+name = "acceptance-tests"
+run = "uv run pytest -q tests/acceptance"
+fast = false
+timeout = 1800
+hint = "Acceptance tests encode the spec owner's scenarios (US<n>-AS<m>). They are the contract - do not edit them to pass."
+
+[[check]]
+name = "architecture-rules"
+run = ""
+enabled = false
+fast = false
+hint = "A module depends on something it must not (docs/ARCHITECTURE.md). Move the logic to its owning module instead of adding the import."
+
+[[check]]
+name = "traceability"
+run = "{python} scripts/harness/check_traceability.py --write"
+fast = false
+hint = "Every FR-### and acceptance scenario needs a test that names its ID (or [VERIFY: manual] + evidence in checks.md)."
+
+[[check]]
+name = "test-integrity"
+run = "{python} scripts/harness/check_test_integrity.py"
+fast = false
+hint = "Tests, skips or acceptance criteria were weakened. Restore them and fix the code, or ask a human to approve."
+
+# [[check]]
+# name = "secrets"
+# run = "gitleaks detect --no-banner --redact"
+# fast = false
+
+# [[check]]
+# name = "coverage-changed-lines"
+# run = "TODO e.g. npx vitest run --coverage && npx diff-cover coverage/cobertura-coverage.xml --fail-under=80"
+# fast = false
+
+# ---------------------------------------------------------------- traceability & tests ---
+[traceability]
+require = ["FR", "AS"]   # add "NFR" (and "SC") once you have tests for them
+id_prefixes = ["FR", "NFR", "SC"]   # add e.g. "BR", "DR" if your requirements use those IDs
+# test_globs = ["tests/**", "src/**/*.test.ts"]   # defaults cover common layouts
+
+[tests]
+acceptance_globs = ["tests/acceptance/**"]   # existing files here are protected from agent edits
+# globs = ["tests/**", "**/*.test.*"]          # override test-file detection if needed
+
+# ---------------------------------------------------------------- agent policy -----------
+[agent_policy]
+ask_on_dependency_add = true          # npm/pip/uv/dotnet/cargo/go adds need human approval
+protected_paths = []                  # extra globs agents may not edit without approval
+secret_paths = []                     # extra globs agents may never read (e.g. config exports with credentials)
+extra_deny_patterns = []              # extra regexes for shell commands to block
+extra_ask_patterns = []               # extra regexes for shell commands needing approval
+
+# ---------------------------------------------------------------- stack cheat-sheet -------
+# Node/TS : prettier --check . | eslint . --max-warnings=0 | tsc --noEmit | vitest run | playwright test | depcruise src
+# Python  : ruff format --check . | ruff check . | mypy src | pytest -q | lint-imports (import-linter)
+# .NET    : dotnet format --verify-no-changes | dotnet build -warnaserror | dotnet test | NetArchTest/ArchUnitNET in tests
+# Java    : ./mvnw -q verify (run_windows = "mvnw.cmd -q verify") | ./gradlew check | ArchUnit in tests
+# Mutation testing is slow - schedule it weekly (Stryker for JS/TS/C#, PIT for Java, mutmut for Python), not here.

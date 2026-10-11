@@ -1,0 +1,17 @@
+# Agentic Delivery Standard - local agent state and personal settings
+.agent/
+CLAUDE.local.md
+.claude/settings.local.json
+
+# Python & Environment
+.venv/
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+dist/
+build/
+.env
+

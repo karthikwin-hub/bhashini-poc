@@ -1,12 +1,15 @@
 ---
-name: "speckit-converge"
-description: "Assess the current codebase against the feature's spec, plan, and tasks, then append any remaining unbuilt work as new tasks to tasks.md so implement can complete it."
-compatibility: "Requires spec-kit project structure with .specify/ directory"
+name: speckit-converge
+description: Assess the current codebase against the feature's spec, plan, and tasks,
+  then append any remaining unbuilt work as new tasks to tasks.md so implement can
+  complete it.
+compatibility: Requires spec-kit project structure with .specify/ directory
 metadata:
-  author: "github-spec-kit"
-  source: "templates/commands/converge.md"
+  author: github-spec-kit
+  source: preset:agentic-delivery
 ---
 
+# Speckit Converge Skill
 
 ## User Input
 
@@ -281,3 +284,20 @@ After producing the result, check if `.specify/extensions.yml` exists in the pro
     After emitting the block above you MUST actually invoke the hook and wait for it to finish before continuing. Run it the same way you would run the command yourself in this agent/session (the invocation may differ from the literal `{command}` id shown above, e.g. a skills-mode agent runs it as `/skill:speckit-...` or `$speckit-...`). Emitting the block alone does not run the hook.
 
 - If no hooks are registered or `.specify/extensions.yml` does not exist, skip silently
+
+
+
+## Agentic Delivery Standard — convergence evidence (appended by preset `agentic-delivery`)
+
+In addition to comparing the codebase with spec.md, plan.md and tasks.md, treat these as convergence evidence:
+
+- Run `python .specify/scripts/harness/verify.py` (full). Any failing check is a gap → append a task to fix it.
+- Run `python .specify/scripts/harness/check_traceability.py --strict --write`. Every MISSING requirement or scenario is a gap → append
+  a test task naming the ID.
+- Read `checks.md`: every requirement without a PASS verdict and observed evidence is a gap.
+- A ticked task with no corresponding commit or verify evidence is not complete — re-open it.
+- Open issues in progress.md that affect requirements block convergence until a human resolves them.
+
+Report **Converged** only when verify passes, traceability (strict) has no MISSING items, checks.md has PASS for every
+requirement (or an approved [VERIFY: manual] result), and no requirement-affecting issue is open. Otherwise report
+**Not converged — N tasks appended**, with the evidence table.
