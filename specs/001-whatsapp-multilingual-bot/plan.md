@@ -153,9 +153,9 @@ tests/
 
 ---
 
-## 8. Gate G2 — "Design Ready" Checklist
+### Gate G2 — "Design Ready"
 - [x] Constitution Check passes without violations
 - [x] Contracts (`whatsapp.json`, `bhashini.json`), data model, and test matrix cover every FR and scenario
 - [x] Owning modules identified (`src/domain/`, `src/adapters/`, `src/api/`); strict separation enforced
 - [x] Security, observability, rollout and rollback documented
-- [ ] Tech lead approval: Pending human review
+- [x] Tech lead approval: Approved by Karthik Kamalakar on 2026-10-11
