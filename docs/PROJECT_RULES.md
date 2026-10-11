@@ -1,21 +1,29 @@
 # Project Rules
 
-<!-- Agentic Delivery Standard v1.0 · tier: SEED (project-owned). Project-specific additions to the standard. Keep it short;
-     link out. Anything here that matters should become a check (harness.toml) or a test as soon as possible. -->
+## 1. Secrets & Environment Management (Mandatory)
+- **Infisical Project**: All credentials, tokens, and environment variables must be stored in Infisical under the project **`bhashini-poc`**.
+- **No Local Storage**: Never store secrets in `.env` files, config files, or local storage. This application is developed and deployed across multiple machines.
+- **Runtime Injection**: Inject environment variables at runtime using the Infisical CLI:
+  ```bash
+  infisical run -- <command>
+  # e.g. infisical run -- uv run uvicorn src.api.app:app --reload --port 8000
+  ```
+- **Secret Setting via CLI**:
+  ```bash
+  infisical secrets set KEY=VALUE --env dev
+  ```
 
-## Glossary
+## 2. Glossary
 | Term | Meaning in this project |
 |---|---|
-| [e.g. Transmission (TX)] | [definition] |
+| **ULCA** | Universal Language Contribution Architecture — MeitY platform for dataset and model orchestration. |
+| **Dhruva** | Unified API Gateway for Bhashini model inference (ASR, NMT, TTS). |
+| **ASR** | Automatic Speech Recognition (speech-to-text transcription). |
+| **NMT** | Neural Machine Translation (text translation between Indic languages and English). |
+| **TTS** | Text-to-Speech (audio voice synthesis). |
+| **DPI** | Digital Public Infrastructure (India's open public digital infrastructure). |
 
-## Project-specific invariants
-- [e.g. All schedule times are stored in UTC and displayed in the channel's local time zone.]
-- [e.g. Ingest requests are idempotent: the same scheduled event never creates two requests.]
-
-## Policies and links
-- AI acceptable-use / data classification policy: [link]
-- Change and release policy: [link]
-- Environments and access: [link]
-
-## Domain notes for agents
-- [Things a new engineer needs to know that are not obvious from the code.]
+## 3. Project Invariants
+- Audio payloads for Bhashini ASR must be transcoded to 16kHz Mono 16-bit PCM WAV.
+- External API calls to Bhashini and WhatsApp must only be performed through adapters (`src/adapters/`).
+- Webhook routes must acknowledge requests within 5 seconds to satisfy Meta WhatsApp timeout SLAs.
